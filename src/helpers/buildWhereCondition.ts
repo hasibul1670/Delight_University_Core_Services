@@ -1,15 +1,16 @@
-import { AcademicSemesterSearchAbleFields } from '../app/modules/academicSemester/academicSemester.constant';
-import { IAcademicSemeterFilterRequest } from '../app/modules/academicSemester/academicSemester.interface';
-import { IPaginationOptions } from '../interfaces/pagination';
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
+type SearchableField = string | number;
 export const buildWhereConditions = (
-  filters: IAcademicSemeterFilterRequest
+  searchTerm?: any,
+  filtersData?: any,
+  searchableFields?: SearchableField[],
+  sortBy?: number | string,
+  sortOrder?: any
 ) => {
-  const { searchTerm, ...filterData } = filters;
   const andConditions = [];
   if (searchTerm) {
     andConditions.push({
-      OR: AcademicSemesterSearchAbleFields.map(field => ({
+      OR: searchableFields?.map(field => ({
         [field]: {
           contains: searchTerm,
           mode: 'insensitive',
@@ -18,26 +19,27 @@ export const buildWhereConditions = (
     });
   }
 
-  if (Object.keys(filterData).length > 0) {
+  if (Object.keys(filtersData).length > 0) {
     andConditions.push({
-      AND: Object.keys(filterData).map(key => ({
+      AND: Object.keys(filtersData).map(key => ({
         [key]: {
-          equals: (filterData as any)[key],
+          equals: (filtersData as any)[key],
         },
       })),
     });
   }
 
-  return andConditions.length > 0 ? { AND: andConditions } : {};
-};
+  const sortConditions: { [key: string]: string } = {};
 
-export const buildOrderBy = (options: IPaginationOptions) => {
-  if (options.sortBy && options.sortOrder) {
-    return {
-      [options.sortBy]: options.sortOrder,
-    };
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
   }
+
+  const whereConditions =
+    andConditions.length > 0 ? { AND: andConditions } : {};
+
   return {
-    createdAt: 'desc',
+    whereConditions,
+    sortConditions,
   };
 };

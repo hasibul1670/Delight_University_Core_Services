@@ -59,7 +59,11 @@ const deleteAcademicFaculty = catchAsync(
 const updateAcademicFaculty = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await AcademicFacultyServices.updateAcademicFaculty(id);
+    const newData = req.body;
+    const result = await AcademicFacultyServices.updateAcademicFaculty(
+      id,
+      newData
+    );
     sendControllerResponse(
       res,
       'AcademicFaculty Updated Successfully!',

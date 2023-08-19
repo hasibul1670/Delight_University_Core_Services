@@ -1,21 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AcademicSemester, PrismaClient } from '@prisma/client';
 import { ApiError } from '../../../handlingError/ApiError';
-import {
-  buildOrderBy,
-  buildWhereConditions,
-} from '../../../helpers/buildWhereCondition';
+import { buildWhereConditions } from '../../../helpers/buildWhereCondition';
 import { isTitleAndCodeChecked } from '../../../helpers/isTitleAndCodeChecked';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
+import { academicSemesterSearchableFields } from './academicSemester.constant';
 import { IAcademicSemeterFilterRequest } from './academicSemester.interface';
 
 const prisma = new PrismaClient();
 
 const createAcademicSemester = async (payload: AcademicSemester) => {
   isTitleAndCodeChecked(payload.title, payload.code);
-  
+
   try {
     return await prisma.academicSemester.create({ data: payload });
   } catch (error) {
@@ -31,19 +29,24 @@ const getAllAcademicSemesters = async (
   filters: IAcademicSemeterFilterRequest,
   options: IPaginationOptions
 ): Promise<IGenericResponse<AcademicSemester[]>> => {
-  const { page, limit, skip } = paginationHelpers.calculatePagination(options);
-  const whereConditions = buildWhereConditions(filters);
-  const orderBy: any = buildOrderBy(options);
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(options);
 
+  const { searchTerm, ...filtersData } = filters;
+  const { whereConditions, sortConditions } = buildWhereConditions(
+    searchTerm,
+    filtersData,
+    academicSemesterSearchableFields,
+    sortBy,
+    sortOrder
+  );
   const result = await prisma.academicSemester.findMany({
     where: whereConditions,
     skip,
     take: limit,
-    orderBy,
+    orderBy: sortConditions,
   });
-
   const total = await prisma.academicSemester.count();
-
   return {
     meta: {
       total,
@@ -69,7 +72,7 @@ const deleteAcademicSemester = async (id: string) => {
   } catch (error) {
     const err = error as any;
     if (err.code === 'P2025') {
-      throw new ApiError(404, 'Acadenic Semester Not Found !!!');
+      throw new ApiError(404, 'Academic Semester Not Found !!!');
     }
   }
 };

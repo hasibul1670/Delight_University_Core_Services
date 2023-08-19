@@ -1,12 +1,11 @@
-import { AcademicFaculty, Prisma, PrismaClient } from '@prisma/client';
+import { AcademicFaculty, PrismaClient } from '@prisma/client';
+import { ApiError } from '../../../handlingError/ApiError';
+import { buildWhereConditions } from '../../../helpers/buildWhereCondition';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
-
-import { ApiError } from '../../../handlingError/ApiError';
 import { academicFacultySearchableFields } from './academicFaculty.constants';
 import { IAcademicFacultyFilterRequest } from './academicFaculty.interface';
-
 const prisma = new PrismaClient();
 const createAcademicFaculty = async (
   payload: AcademicFaculty
@@ -21,55 +20,29 @@ const createAcademicFaculty = async (
     throw error;
   }
 };
-
 const getAllAcademicFaculties = async (
   filters: IAcademicFacultyFilterRequest,
   options: IPaginationOptions
 ): Promise<IGenericResponse<AcademicFaculty[]>> => {
-  const { limit, page, skip } = paginationHelpers.calculatePagination(options);
-  const { searchTerm, ...filterData } = filters;
+  const { limit, page, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(options);
 
-  const andConditions = [];
 
-  if (searchTerm) {
-    andConditions.push({
-      OR: academicFacultySearchableFields.map(field => ({
-        [field]: {
-          contains: searchTerm,
-          mode: 'insensitive',
-        },
-      })),
-    });
-  }
-
-  if (Object.keys(filterData).length > 0) {
-    andConditions.push({
-      AND: Object.keys(filterData).map(key => ({
-        [key]: {
-          equals: (filterData as any)[key],
-        },
-      })),
-    });
-  }
-
-  const whereConditions: Prisma.AcademicFacultyWhereInput =
-    andConditions.length > 0 ? { AND: andConditions } : {};
-
+  const { searchTerm, ...filtersData } = filters;
+  const { whereConditions, sortConditions } = buildWhereConditions(
+    searchTerm,
+    filtersData,
+    academicFacultySearchableFields,
+    sortBy,
+    sortOrder
+  );
   const result = await prisma.academicFaculty.findMany({
     where: whereConditions,
     skip,
     take: limit,
-    orderBy:
-      options.sortBy && options.sortOrder
-        ? { [options.sortBy]: options.sortOrder }
-        : {
-            createdAt: 'desc',
-          },
+    orderBy: sortConditions,
   });
-  const total = await prisma.academicFaculty.count({
-    where: whereConditions,
-  });
-
+  const total = await prisma.academicFaculty.count();
   return {
     meta: {
       total,
@@ -90,27 +63,37 @@ const getSingleAcademicFaculty = async (
   });
   return result;
 };
-const deleteAcademicFaculty = async (
-  id: string
-): Promise<AcademicFaculty | null> => {
-  const result = await prisma.academicFaculty.findUnique({
-    where: {
-      id,
-    },
-  });
-  return result;
+const deleteAcademicFaculty = async (id: string) => {
+  try {
+    return await prisma.academicFaculty.delete({
+      where: { id },
+    });
+  } catch (error) {
+    const err = error as any;
+    if (err.code === 'P2025') {
+      throw new ApiError(404, 'Academic Faculty Not Found !!!');
+    }
+  }
 };
 const updateAcademicFaculty = async (
-  id: string
+  id: string,
+  newData: Partial<AcademicFaculty>
 ): Promise<AcademicFaculty | null> => {
-  const result = await prisma.academicFaculty.findUnique({
-    where: {
-      id,
-    },
-  });
-  return result;
-};
+  try {
+    const updatedSemester = await prisma.academicFaculty.update({
+      where: { id },
+      data: newData,
+    });
 
+    return updatedSemester;
+  } catch (error) {
+    const err = error as any;
+    if (err.code === 'P2025') {
+      throw new ApiError(404, 'Academic Semester Not Found !!!');
+    }
+    throw error;
+  }
+};
 export const AcademicFacultyServices = {
   createAcademicFaculty,
   getAllAcademicFaculties,

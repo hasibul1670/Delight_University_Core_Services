@@ -1,34 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AcademicSemester } from '@prisma/client';
 import { Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
 import { ApiError } from '../../../handlingError/ApiError';
 import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
-import sendReponse from '../../../shared/sendResponse';
+import { sendControllerResponse } from '../../../shared/sendControllerResponse';
 import { AcademicSemesterFilterAbleFileds } from './academicSemester.constant';
 import { AcademicSemesterServices } from './academicSemester.services';
-const sendAcademicSemesterResponse = (
-  res: Response,
-  message: string,
-  data: any,
-  meta?: any
-) => {
-  sendReponse<AcademicSemester>(res, {
-    statusCode: StatusCodes.OK,
-    success: true,
-    message,
-    data,
-    meta,
-  });
-};
 
 const createAcademicSemester = catchAsync(
   async (req: Request, res: Response) => {
     const result = await AcademicSemesterServices.createAcademicSemester(
       req.body
     );
-    sendAcademicSemesterResponse(
+    sendControllerResponse(
       res,
       'AcademicSemester is Created Successfully!',
       result
@@ -45,7 +29,7 @@ const getAllAcademicSemesters = catchAsync(
       filters,
       options
     );
-    sendAcademicSemesterResponse(
+    sendControllerResponse(
       res,
       'AcademicSemesters retrieved successfully !',
       result
@@ -57,7 +41,7 @@ const deleteAcademicSemester = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const result = await AcademicSemesterServices.deleteAcademicSemester(id);
-    sendAcademicSemesterResponse(
+    sendControllerResponse(
       res,
       ' AcademicSemester Deleted successfully !',
       result
@@ -75,7 +59,7 @@ const getSingleAcademicSemester = catchAsync(
       throw new ApiError(404, 'Academic semester not found');
     }
 
-    sendAcademicSemesterResponse(
+    sendControllerResponse(
       res,
       'Single AcademicSemester retrieved successfully!',
       result
@@ -91,7 +75,7 @@ const updateSingleAcademicSemester = catchAsync(
       id,
       newData
     );
-    sendAcademicSemesterResponse(
+    sendControllerResponse(
       res,
       'Single AcademicSemester Updated  successfully !',
       result

@@ -1,0 +1,100 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  product_id Int @id @default(autoincrement())
+  product_name String
+  description String
+  category_id Int
+  manufacturer_id Int
+  inventory_id Int
+  manufacturer Manufacturer @relation(fields: [manufacturer_id], references: [manufacturer_id])
+  inventory Inventory @relation(fields: [inventory_id], references: [inventory_id])
+  categories Category @relation(fields: [category_id], references: [category_id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  color ProductColor[]
+  products Review[]
+
+}
+
+model Review{
+  review_id Int @id @default(autoincrement())
+  product_id  Int
+  customer_id Int
+  rating Int
+  products Product @relation(fields: [product_id],references: [product_id])
+  customers Customer @relation(fields: [customer_id],references: [customer_id])
+  review_text String
+  review_date  DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+model Category{
+  category_id Int @id @default(autoincrement())
+  categoy_name  String
+  slug String
+  categories Product[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Customer{
+  customer_id Int @id @default(autoincrement())
+  first_name String
+  last_name String
+  email String
+  address String
+  customers Review[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+
+model ProductColor{
+  product_id Int @id
+  color_id Int
+  product  Product  @relation(fields:[product_id],references: [product_id])
+  color Color @relation(fields:[color_id],references: [color_id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Color{
+  color_id Int @id @default(autoincrement())
+  color_name String
+  color_code String
+  color ProductColor[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Inventory{
+  inventory_id Int @id @default(autoincrement())
+  product_id Int
+  quantity Int
+  location String
+  products Product[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+model Manufacturer{
+  manufacturer_id Int @id @default(autoincrement())
+  manufacturer_name String
+  address String
+  contact_no String
+  products Product[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+ 

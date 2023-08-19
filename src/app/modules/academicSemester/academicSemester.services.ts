@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AcademicSemester, PrismaClient } from '@prisma/client';
+import { StatusCodes } from 'http-status-codes';
 import { ApiError } from '../../../handlingError/ApiError';
 import {
   buildOrderBy,
@@ -8,12 +9,19 @@ import {
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
+import { academicSemesterTitleCodeMapper } from './academicSemester.constant';
 import { IAcademicSemeterFilterRequest } from './academicSemester.interface';
 
 const prisma = new PrismaClient();
- 
 
 const createAcademicSemester = async (payload: AcademicSemester) => {
+  if (academicSemesterTitleCodeMapper[payload.title] !== payload.code) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      `Invalid Semester Code!! Code Will be : Autumn:01 |Summer: 02 |Fall:03 `
+    );
+  }
+
   try {
     return await prisma.academicSemester.create({ data: payload });
   } catch (error) {
@@ -72,9 +80,30 @@ const deleteAcademicSemester = async (id: string) => {
   }
 };
 
+const updateSingleAcademicSemester = async (
+  id: string,
+  newData: Partial<AcademicSemester>
+) => {
+  try {
+    const updatedSemester = await prisma.academicSemester.update({
+      where: { id },
+      data: newData,
+    });
+
+    return updatedSemester;
+  } catch (error) {
+    const err = error as any;
+    if (err.code === 'P2025') {
+      throw new ApiError(404, 'Academic Semester Not Found !!!');
+    }
+    throw error;
+  }
+};
+
 export const AcademicSemesterServices = {
   createAcademicSemester,
   deleteAcademicSemester,
   getAllAcademicSemesters,
   getSingleAcademicSemester,
+  updateSingleAcademicSemester,
 };

@@ -1,43 +1,43 @@
-import { SortOrder } from 'mongoose';
+import { AcademicSemesterSearchAbleFields } from '../app/modules/academicSemester/academicSemester.constant';
+import { IAcademicSemeterFilterRequest } from '../app/modules/academicSemester/academicSemester.interface';
+import { IPaginationOptions } from '../interfaces/pagination';
 
 export const buildWhereConditions = (
-  searchTerm?: string,
-  filtersData?: any,
-  searchableFields?: string[],
-  sortBy?: number | string,
-  sortOrder?: SortOrder
+  filters: IAcademicSemeterFilterRequest
 ) => {
+  const { searchTerm, ...filterData } = filters;
   const andConditions = [];
   if (searchTerm) {
-    const searchRegExp = new RegExp('.*' + searchTerm + '.*', 'i');
     andConditions.push({
-      $or: searchableFields?.map(field => ({
+      OR: AcademicSemesterSearchAbleFields.map(field => ({
         [field]: {
-          $regex: searchRegExp,
+          contains: searchTerm,
+          mode: 'insensitive',
         },
       })),
     });
   }
 
-  if (Object.keys(filtersData).length) {
+  if (Object.keys(filterData).length > 0) {
     andConditions.push({
-      $and: Object.entries(filtersData).map(([field, value]) => ({
-        [field]: value,
+      AND: Object.keys(filterData).map(key => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
       })),
     });
   }
 
-  const sortConditions: { [key: string]: SortOrder } = {};
+  return andConditions.length > 0 ? { AND: andConditions } : {};
+};
 
-  if (sortBy && sortOrder) {
-    sortConditions[sortBy] = sortOrder;
+export const buildOrderBy = (options: IPaginationOptions) => {
+  if (options.sortBy && options.sortOrder) {
+    return {
+      [options.sortBy]: options.sortOrder,
+    };
   }
-
-  const whereConditions =
-    andConditions.length > 0 ? { $and: andConditions } : {};
-
   return {
-    whereConditions,
-    sortConditions,
+    createdAt: 'desc',
   };
 };

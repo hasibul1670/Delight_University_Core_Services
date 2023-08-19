@@ -1,28 +1,3 @@
-import { ICourseMonths } from "./course.interface";
+export const AcademicSemesterSearchAbleFields = ['title', 'code', 'startMonth', 'endMonth'];
 
-
-
-  export const courseMonths: ICourseMonths[] = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-  
-  
-  
-  export const courseSearchableFields = ['title'];
-  
-  export const courseFilterableFields = [
-    'searchTerm',
-    'title',
-   
-  ];
+export const AcademicSemesterFilterAbleFileds = ['searchTerm', 'code', 'startMonth', 'endMonth'];

@@ -47,6 +47,7 @@ model AcademicDepartment {
   academicFacultyId String
   students          Student[]
   faculties         Faculty[]
+
   @@unique([title], name: "unique_academic_department")
   @@map("academic_departments")
 }
@@ -71,6 +72,7 @@ model Student {
   academicFacultyId    String
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
+
   @@unique([email], name: "unique_student")
   @@map("students")
 }
@@ -93,6 +95,7 @@ model Faculty {
   academicFacultyId    String
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
-  @@unique([email], name: "unique_faculty")
+
+  @@unique([email], name: "unique_faculties")
   @@map("faculties")
 }

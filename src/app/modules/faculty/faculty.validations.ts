@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const create = z.object({
+const createValidation = z.object({
     body: z.object({
         facultyId: z.string({
             required_error: 'Faculty id is required'
@@ -41,7 +41,7 @@ const create = z.object({
     })
 });
 
-const update = z.object({
+const updateValidation = z.object({
     body: z.object({
         facultyId: z.string().optional(),
         firstName: z.string().optional(),
@@ -67,7 +67,7 @@ const assignOrRemoveCourses = z.object({
 });
 
 export const FacultyValidation = {
-    create,
-    update,
+    createValidation,
+    updateValidation,
     assignOrRemoveCourses
 };

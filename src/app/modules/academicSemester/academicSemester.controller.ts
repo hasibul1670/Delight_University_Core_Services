@@ -14,7 +14,7 @@ const createAcademicSemester = catchAsync(
     );
     sendControllerResponse(
       res,
-      'AcademicSemester is Created Successfully!',
+      'Academic Semester Created Successfully!',
       result
     );
   }

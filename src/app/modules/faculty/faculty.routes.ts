@@ -4,21 +4,20 @@ import { FacultyController } from './faculty.controller';
 import { FacultyValidation } from './faculty.validations';
 
 const router = express.Router();
-
-router.get('/', FacultyController.getAllFromDB);
-
-router.get('/:id', FacultyController.getByIdFromDB);
-
 router.post(
   '/',
-  validateRequest(FacultyValidation.create),
-  FacultyController.insertIntoDB
+  validateRequest(FacultyValidation.createValidation),
+  FacultyController.createFaculty
 );
-router.get('/:id', FacultyController.getByIdFromDB);
-router.proppatch(
-  '/',
-  validateRequest(FacultyValidation.create),
-  FacultyController.insertIntoDB
+router.get('/', FacultyController.getAllFaculties);
+
+router.get('/:id', FacultyController.getSingleFaculty);
+
+router.delete('/:id', FacultyController.deleteFaculty);
+router.patch(
+  '/:id',
+  validateRequest(FacultyValidation.updateValidation),
+  FacultyController.updateFaculty
 );
 
 export const FacultyRoutes = router;

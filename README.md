@@ -1,73 +1,108 @@
-### Product Management Microservices Server
+### Delight University Core Services
 
 ## ER Diagram
 
 <img src="https://i.ibb.co/bgRjbws/umDM.png" alt="ER Diagram"></img>
 
-#### Entities
 
-- Product
 
-  - product_id (Primary Key)
-  - product_name,
-  - description,
-  - category_id (Foreign Key),
-  - manufacturer_id (Foreign Key),
-  - price,
-  - creation_date,
-  - last_updated
+# Delight University Core Services
 
-- Category
-  - category_id (Primary Key),
-  - category_name,
-  - slug
-- Manufacturer
+This repository contains the core services for Delight University. It includes the database schema and models for managing academic semesters, faculties, departments, students, and more.
 
-  - manufacturer_id (Primary Key),
-  - manufacturer_name,
-  - address,
-  - contact_no
+## Entities
 
-- Inventory
+### AcademicSemester
 
-  - inventory_id (Primary Key),
-  - product_id (Foreign Key),
-  - quantity,
-  - location,
+- id (Primary Key)
+- year
+- title
+- code
+- startMonth
+- endMonth
+- createdAt
+- updatedAt
+- students
 
-- Color
+### AcademicFaculty
 
-  - color_id (Primary Key),
-  - color_name,
-  - color_code,
+- id (Primary Key)
+- title
+- createdAt
+- updatedAt
+- academicDepartments
+- students
+- faculties
 
-- ProductColor
+### AcademicDepartment
 
-  - product_id (Primary Key, Foreign Key),
-  - color_id (Foreign Key,Primary Key),
+- id (Primary Key)
+- title
+- createdAt
+- updatedAt
+- academicFaculty
+- students
+- faculties
 
-- ApparelSize
+### Student
 
-  - size_id (Primary Key),
-  - name
-  - code,
+- id (Primary Key)
+- studentId
+- firstName
+- lastName
+- middlename
+- profileImage
+- email
+- contactNo
+- gender
+- bloodGroup
+- academicSemester
+- academicDepartment
+- academicFaculty
+- createdAt
+- updatedAt
 
-- Customer
+### Faculty
 
-  - customer_id (Primary Key),
-  - first_name
-  - last_name
-  - email
-  - address
-  - contact_no
+- id (Primary Key)
+- facultyId
+- firstName
+- lastName
+- middlename
+- profileImage
+- email
+- contactNo
+- gender
+- bloodGroup
+- designation
+- academicDepartment
+- academicFaculty
+- createdAt
+- updatedAt
 
-- Review
-  - review_id (Primary Key),
-  - product_id (Foreign Key),
-  - customer_id (Foreign Key),
-  - rating
-  - review_text
-  - review_date
+## Features
+
+- User authentication and authorization
+- Interactive learning materials
+- Discussion forums
+- Assignments and assessments
+- Progress tracking
+- Notifications and announcements
+
+## Technologies Used
+
+- Backend: Node.js, Express.js, TypeScript
+- Database: PostgreSQL
+- Deployment: Vercel
+- Authentication: JWT
+- Packages Used: bcrypt, http-errors, http-status-codes, zod
+
+If you have any questions, feel free to reach out to us:
+
+- Email: hasibulislam1670@gmail.com
+- Website: https://client-summer-school.vercel.app/
+- GitHub: https://github.com/hasibul1670
+
 
 ## Features
 
@@ -79,48 +114,9 @@
 - Progress tracking
 - Notifications and announcements
 
-## Technologies Used
 
-- Backend: Node.js, Express.js,Typescript
-- Database: PostgreSQL
-- Deployment: Vercel
-- Authentication: JWT
-- Packages Used: bcrypt,http-errors,http-status-codes,zod
 
 If you have any questions, feel free to reach out to us:
 
 - Email: hasibulislam1670@gmail.com
-- Website: https://client-summer-school.vercel.app/
 - GitHub: https://github.com/hasibul1670
-
-### Live Link(vercel): https://summer-camp-school-server-sigma.vercel.app
-
-<!-- ### Application Routes:
-
-#### student
-
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/students/create-students [POST]
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/students [get all users] (GET)
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/students/6497381fc9fbf4e29d55ee7f (get Single student) (GET)
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/students/6497381fc9fbf4e29d55ee7f (Update Single student) (PATCH)
-
-#### instructor
-
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/instructors/create-Instructor [create an Instructor] [POST]
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/students/create-students [POST]
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/students/6497381fc9fbf4e29d55ee7f (get Single student) (GET)
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/students/6497381fc9fbf4e29d55ee7f (Update Single student) (PATCH)
-
-#### courses
-
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/courses/create-courses [create a courses] (POST)
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/courses [get all courses] (GET)
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/courses/648ca42c17d2d4e64a734513 [create a single courses] (GET)
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/courses/648ca42c17d2d4e64a734513 [Update a single courses] (PATCH)
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/courses/648ca42c17d2d4e64a734513 [Delete a single courses] (DELETE)
-
-#### Login
-
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/auth/login [Login] (POST)
-- https://summer-camp-school-server-sigma.vercel.app/api/v1/auth/change-password (POST) -->
-# Delight_University_Core_Services

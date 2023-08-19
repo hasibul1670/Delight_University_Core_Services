@@ -7,7 +7,9 @@ import { AcademicFacultyServices } from './academicFaculty.service';
 
 const createAcademicFaculty = catchAsync(
   async (req: Request, res: Response) => {
-    const result = await AcademicFacultyServices.insertIntoDB(req.body);
+    const result = await AcademicFacultyServices.createAcademicFaculty(
+      req.body
+    );
     sendControllerResponse(
       res,
       'AcademicAcademicFaculty created successfully',
@@ -20,7 +22,10 @@ const getAllAcademicFaculties = catchAsync(
   async (req: Request, res: Response) => {
     const filters = pick(req.query, academicFacultyFilterableFields);
     const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
-    const result = await AcademicFacultyServices.getAllFromDB(filters, options);
+    const result = await AcademicFacultyServices.getAllAcademicFaculties(
+      filters,
+      options
+    );
     sendControllerResponse(
       res,
       'AcademicFaculties fetched successfully',
@@ -32,7 +37,7 @@ const getAllAcademicFaculties = catchAsync(
 const getSingleAcademicFaculty = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await AcademicFacultyServices.getByIdFromDB(id);
+    const result = await AcademicFacultyServices.getSingleAcademicFaculty(id);
     sendControllerResponse(
       res,
       'A Single AcademicFaculty fetched Successfully!',
@@ -43,7 +48,7 @@ const getSingleAcademicFaculty = catchAsync(
 const deleteAcademicFaculty = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await AcademicFacultyServices.getByIdFromDB(id);
+    const result = await AcademicFacultyServices.deleteAcademicFaculty(id);
     sendControllerResponse(
       res,
       'AcademicFaculty Deleted Successfully!',
@@ -54,7 +59,7 @@ const deleteAcademicFaculty = catchAsync(
 const updateAcademicFaculty = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await AcademicFacultyServices.getByIdFromDB(id);
+    const result = await AcademicFacultyServices.updateAcademicFaculty(id);
     sendControllerResponse(
       res,
       'AcademicFaculty Updated Successfully!',

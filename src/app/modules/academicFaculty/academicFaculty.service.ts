@@ -3,18 +3,23 @@ import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 
+import { ApiError } from '../../../handlingError/ApiError';
 import { academicFacultySearchableFields } from './academicFaculty.constants';
 import { IAcademicFacultyFilterRequest } from './academicFaculty.interface';
 
 const prisma = new PrismaClient();
 const createAcademicFaculty = async (
-  data: AcademicFaculty
+  payload: AcademicFaculty
 ): Promise<AcademicFaculty> => {
-  const result = await prisma.academicFaculty.create({
-    data,
-  });
-
-  return result;
+  try {
+    return await prisma.academicFaculty.create({ data: payload });
+  } catch (error) {
+    const err = error as any;
+    if (err.code === 'P2002') {
+      throw new ApiError(409, 'This Academic Faculty is already Exist');
+    }
+    throw error;
+  }
 };
 
 const getAllAcademicFaculties = async (

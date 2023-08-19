@@ -15,6 +15,7 @@ const prisma = new PrismaClient();
 
 const createAcademicSemester = async (payload: AcademicSemester) => {
   isTitleAndCodeChecked(payload.title, payload.code);
+  
   try {
     return await prisma.academicSemester.create({ data: payload });
   } catch (error) {

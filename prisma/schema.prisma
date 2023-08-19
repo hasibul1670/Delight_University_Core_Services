@@ -22,9 +22,7 @@ model AcademicSemester {
   students   Student[]
 
   @@unique([year, title, code, startMonth, endMonth], name: "unique_academic_semester")
-
   @@map("academic_semesters")
-  
 }
 
 model AcademicFaculty {
@@ -36,6 +34,7 @@ model AcademicFaculty {
   students            Student[]
   faculties           Faculty[]
 
+  @@unique([title], name: "unique_academic_faculty")
   @@map("academic_faculties")
 }
 
@@ -48,7 +47,7 @@ model AcademicDepartment {
   academicFacultyId String
   students          Student[]
   faculties         Faculty[]
-
+  @@unique([title], name: "unique_academic_department")
   @@map("academic_departments")
 }
 
@@ -72,7 +71,7 @@ model Student {
   academicFacultyId    String
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
-
+  @@unique([email], name: "unique_student")
   @@map("students")
 }
 
@@ -94,6 +93,6 @@ model Faculty {
   academicFacultyId    String
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
-
+  @@unique([email], name: "unique_faculty")
   @@map("faculties")
 }

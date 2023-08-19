@@ -1,4 +1,5 @@
-
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -9,92 +10,90 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Product {
-  product_id Int @id @default(autoincrement())
-  product_name String
-  description String
-  category_id Int
-  manufacturer_id Int
-  inventory_id Int
-  manufacturer Manufacturer @relation(fields: [manufacturer_id], references: [manufacturer_id])
-  inventory Inventory @relation(fields: [inventory_id], references: [inventory_id])
-  categories Category @relation(fields: [category_id], references: [category_id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model AcademicSemester {
+  id         String    @id @default(uuid())
+  year       Int
+  title      String
+  code       String
+  startMonth String
+  endMonth   String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  students   Student[]
+
+  @@unique([year, title, code, startMonth, endMonth], name: "unique_academic_semester")
+
+  @@map("academic_semesters")
   
-  color ProductColor[]
-  products Review[]
-
 }
 
-model Review{
-  review_id Int @id @default(autoincrement())
-  product_id  Int
-  customer_id Int
-  rating Int
-  products Product @relation(fields: [product_id],references: [product_id])
-  customers Customer @relation(fields: [customer_id],references: [customer_id])
-  review_text String
-  review_date  DateTime @default(now())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
-model Category{
-  category_id Int @id @default(autoincrement())
-  categoy_name  String
-  slug String
-  categories Product[]
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model AcademicFaculty {
+  id                  String               @id @default(uuid())
+  title               String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  academicDepartments AcademicDepartment[]
+  students            Student[]
+  faculties           Faculty[]
+
+  @@map("academic_faculties")
 }
 
-model Customer{
-  customer_id Int @id @default(autoincrement())
-  first_name String
-  last_name String
-  email String
-  address String
-  customers Review[]
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model AcademicDepartment {
+  id                String          @id @default(uuid())
+  title             String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  academicFaculty   AcademicFaculty @relation(fields: [academicFacultyId], references: [id])
+  academicFacultyId String
+  students          Student[]
+  faculties         Faculty[]
+
+  @@map("academic_departments")
 }
 
+model Student {
+  id           String @id @default(uuid())
+  studentId    String
+  firstName    String
+  lastName     String
+  middlename   String
+  profileImage String
+  email        String
+  contactNo    String
 
-model ProductColor{
-  product_id Int @id
-  color_id Int
-  product  Product  @relation(fields:[product_id],references: [product_id])
-  color Color @relation(fields:[color_id],references: [color_id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  gender               String
+  bloodGroup           String
+  academicSemester     AcademicSemester   @relation(fields: [academicSemesterId], references: [id])
+  academicSemesterId   String
+  academicDepartment   AcademicDepartment @relation(fields: [academicDepartmentId], references: [id])
+  academicDepartmentId String
+  academicFaculty      AcademicFaculty    @relation(fields: [academicFacultyId], references: [id])
+  academicFacultyId    String
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  @@map("students")
 }
 
-model Color{
-  color_id Int @id @default(autoincrement())
-  color_name String
-  color_code String
-  color ProductColor[]
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
+model Faculty {
+  id                   String             @id @default(uuid())
+  facultyId            String
+  firstName            String
+  lastName             String
+  middlename           String
+  profileImage         String
+  email                String
+  contactNo            String
+  gender               String
+  bloodGroup           String
+  designation          String
+  academicDepartment   AcademicDepartment @relation(fields: [academicDepartmentId], references: [id])
+  academicDepartmentId String
+  academicFaculty      AcademicFaculty    @relation(fields: [academicFacultyId], references: [id])
+  academicFacultyId    String
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
 
-model Inventory{
-  inventory_id Int @id @default(autoincrement())
-  product_id Int
-  quantity Int
-  location String
-  products Product[]
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  @@map("faculties")
 }
-model Manufacturer{
-  manufacturer_id Int @id @default(autoincrement())
-  manufacturer_name String
-  address String
-  contact_no String
-  products Product[]
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
-
- 

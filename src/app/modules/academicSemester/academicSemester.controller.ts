@@ -2,12 +2,12 @@
 import { AcademicSemester } from '@prisma/client';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { ApiError } from '../../../handlingError/ApiError';
 import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
 import sendReponse from '../../../shared/sendResponse';
 import { AcademicSemesterFilterAbleFileds } from './academicSemester.constant';
 import { AcademicSemesterServices } from './academicSemester.services';
-
 const sendAcademicSemesterResponse = (
   res: Response,
   message: string,
@@ -64,17 +64,25 @@ const deleteAcademicSemester = catchAsync(
     );
   }
 );
+
 const getSingleAcademicSemester = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+
     const result = await AcademicSemesterServices.getSingleAcademicSemester(id);
+
+    if (!result) {
+      throw new ApiError(404, 'Academic semester not found');
+    }
+
     sendAcademicSemesterResponse(
       res,
-      'Single AcademicSemester retrieved successfully !',
+      'Single AcademicSemester retrieved successfully!',
       result
     );
   }
 );
+
 const updateSingleAcademicSemester = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;

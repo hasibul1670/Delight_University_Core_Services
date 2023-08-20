@@ -1,33 +1,18 @@
 import { Request, Response } from 'express';
-import { AcademicDepartment } from '@prisma/client';
-import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
-import { default as sendReponse } from '../../../shared/sendResponse';
+import { sendControllerResponse } from '../../../shared/sendControllerResponse';
 import { academicDepartmentFilterableFields } from './academicDepartment.contants';
 import { AcademicDepartmentService } from './academicDepartment.service';
 
-const sendAcademicDepartmentResponse = (
-  res: Response,
-  message: string,
-  data: any,
-  meta?: any
-) => {
-  sendReponse<AcademicDepartment>(res, {
-    statusCode: StatusCodes.OK,
-    success: true,
-    message,
-    data,
-    meta,
-  });
-};
-
 const createAcademicDepartment = catchAsync(
   async (req: Request, res: Response) => {
-    const result = await AcademicDepartmentService.insertIntoDB(req.body);
-    sendAcademicDepartmentResponse(
+    const result = await AcademicDepartmentService.createAcademicDepartment(
+      req.body
+    );
+    sendControllerResponse(
       res,
-      'Academic Semester is Created Successfully!',
+      'Academic Department Created successfully',
       result
     );
   }
@@ -37,13 +22,13 @@ const getAllAcademicDepartments = catchAsync(
   async (req: Request, res: Response) => {
     const filters = pick(req.query, academicDepartmentFilterableFields);
     const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
-    const result = await AcademicDepartmentService.getAllFromDB(
+    const result = await AcademicDepartmentService.getAllAcademicDepartments(
       filters,
       options
     );
-    sendAcademicDepartmentResponse(
+    sendControllerResponse(
       res,
-      'Academic Semester  Created Successfully!',
+      'All academic Department Retrieved successfully',
       result
     );
   }
@@ -52,8 +37,10 @@ const getAllAcademicDepartments = catchAsync(
 const getSingleAcademicDepartment = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await AcademicDepartmentService.getByIdFromDB(id);
-    sendAcademicDepartmentResponse(
+    const result = await AcademicDepartmentService.getSingleAcademicDepartment(
+      id
+    );
+    sendControllerResponse(
       res,
       'A academic Semester retrieved Successfully!',
       result
@@ -63,8 +50,8 @@ const getSingleAcademicDepartment = catchAsync(
 const deleteAcademicDepartment = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await AcademicDepartmentService.getByIdFromDB(id);
-    sendAcademicDepartmentResponse(
+    const result = await AcademicDepartmentService.deleteAcademicDepartment(id);
+    sendControllerResponse(
       res,
       'Academic Semester deleted Successfully!',
       result
@@ -74,8 +61,9 @@ const deleteAcademicDepartment = catchAsync(
 const updateAcademicDepartment = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await AcademicDepartmentService.getByIdFromDB(id);
-    sendAcademicDepartmentResponse(
+    const newData = req.body;
+    const result = await AcademicDepartmentService.updateAcademicDepartment(id,newData);
+    sendControllerResponse(
       res,
       'Academic Semester Updated Successfully!',
       result

@@ -24,6 +24,8 @@ const getAllAcademicFaculties = async (
   filters: IAcademicFacultyFilterRequest,
   options: IPaginationOptions
 ): Promise<IGenericResponse<AcademicFaculty[]>> => {
+
+  
   const { limit, page, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(options);
 
@@ -88,6 +90,9 @@ const updateAcademicFaculty = async (
     return updatedSemester;
   } catch (error) {
     const err = error as any;
+    if (err.code === 'P2002') {
+      throw new ApiError(409, 'This Academic Faculty is already Exist');
+    }
     if (err.code === 'P2025') {
       throw new ApiError(404, 'Academic Semester Not Found !!!');
     }

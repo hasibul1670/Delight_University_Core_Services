@@ -7,7 +7,7 @@ const createValidation = z.object({
         required_error: 'Title is required',
       })
       .min(5, 'Title must be at least 5 characters')
-      .max(100, 'Title must be at most 100 characters'),
+      .max(200, 'Title must be at most 200 characters'),
   }),
 });
 
@@ -19,7 +19,7 @@ const updateValidation = z.object({
           required_error: 'Title is required',
         })
         .min(5, 'Title must be at least 5 characters')
-        .max(20, 'Title must be at most 20 characters'),
+        .max(200, 'Title must be at most 200 characters'),
     })
     .optional(),
 });

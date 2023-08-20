@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PrismaClient, Student } from '@prisma/client';
 import { ApiError } from '../../../handlingError/ApiError';
-import {
-  buildOrderBy,
-  buildWhereConditions,
-} from '../../../helpers/buildWhereCondition';
+import { buildWhereConditions } from '../../../helpers/buildWhereCondition';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
+import { studentSearchableFields } from './student.constant';
 import { IStudentFilterRequest } from './student.interface';
 
 const prisma = new PrismaClient();
@@ -26,7 +24,7 @@ const createStudent = async (payload: Student): Promise<Student> => {
   } catch (error) {
     const err = error as any;
     if (err.code === 'P2002') {
-      throw new ApiError(409, 'Duplicate entry for academic semester');
+      throw new ApiError(409, 'This Student is already Exist !! ');
     }
     throw error;
   }
@@ -36,19 +34,23 @@ const getAllStudents = async (
   filters: IStudentFilterRequest,
   options: IPaginationOptions
 ): Promise<IGenericResponse<Student[]>> => {
-  const { page, limit, skip } = paginationHelpers.calculatePagination(options);
-  const whereConditions = buildWhereConditions(filters);
-  const orderBy: any = buildOrderBy(options);
-
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(options);
+  const { searchTerm, ...filtersData } = filters;
+  const { whereConditions, sortConditions } = buildWhereConditions(
+    searchTerm,
+    filtersData,
+    studentSearchableFields,
+    sortBy,
+    sortOrder
+  );
   const result = await prisma.student.findMany({
     where: whereConditions,
     skip,
     take: limit,
-    orderBy,
+    orderBy: sortConditions,
   });
-
   const total = await prisma.student.count();
-
   return {
     meta: {
       total,
@@ -74,7 +76,7 @@ const deleteStudent = async (id: string) => {
   } catch (error) {
     const err = error as any;
     if (err.code === 'P2025') {
-      throw new ApiError(404, 'Acadenic Semester Not Found !!!');
+      throw new ApiError(404, 'Student Not Found !!!');
     }
   }
 };
@@ -85,13 +87,14 @@ const updateSingleStudent = async (id: string, newData: Partial<Student>) => {
       where: { id },
       data: newData,
     });
-
     return updatedSemester;
   } catch (error) {
-    console.log('Hello', error);
     const err = error as any;
+    if (err.code === 'P2002') {
+      throw new ApiError(409, 'This Student is already Exist');
+    }
     if (err.code === 'P2025') {
-      throw new ApiError(404, 'Academic Semester Not Found !!!');
+      throw new ApiError(404, 'Student  Not Found !!!');
     }
     throw error;
   }

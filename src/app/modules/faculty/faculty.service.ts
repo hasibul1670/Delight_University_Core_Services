@@ -29,9 +29,10 @@ const getAllFaculties = async (
   filters: IFacultyFilterRequest,
   options: IPaginationOptions
 ): Promise<IGenericResponse<Faculty[]>> => {
+
+
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(options);
-
   const { searchTerm, ...filtersData } = filters;
   const { whereConditions, sortConditions } = buildWhereConditions(
     searchTerm,

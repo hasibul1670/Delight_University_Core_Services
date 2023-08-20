@@ -14,7 +14,7 @@ export const studentFilterableFields: string[] = [
 export const studentSearchableFields: string[] = [
   'firstName',
   'lastName',
-  'middleName',
+  'middlename',
   'email',
   'contactNo',
   'studentId'

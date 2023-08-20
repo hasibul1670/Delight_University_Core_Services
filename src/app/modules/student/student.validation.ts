@@ -11,7 +11,7 @@ const createValidationSchema = z.object({
     lastName: z.string({
       required_error: 'Last name is required',
     }),
-    middleName: z.string({
+    middlename: z.string({
       required_error: 'Middle name is required',
     }),
     profileImage: z.string({
@@ -48,7 +48,7 @@ const updateValidationSchema = z.object({
     studentId: z.string().optional(),
     firstName: z.string().optional(),
     lastName: z.string().optional(),
-    middleName: z.string().optional(),
+    middlename: z.string().optional(),
     profileImage: z.string().optional(),
     email: z
       .string()

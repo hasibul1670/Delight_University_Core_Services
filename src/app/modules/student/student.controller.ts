@@ -4,8 +4,8 @@ import { ApiError } from '../../../handlingError/ApiError';
 import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
 import { sendControllerResponse } from '../../../shared/sendControllerResponse';
-import { StudentServices } from './student.services';
 import { studentFilterableFields } from './student.constant';
+import { StudentServices } from './student.services';
 
 const createStudent = catchAsync(async (req: Request, res: Response) => {
   const result = await StudentServices.createStudent(req.body);
@@ -32,7 +32,7 @@ const getSingleStudent = catchAsync(async (req: Request, res: Response) => {
   const result = await StudentServices.getSingleStudent(id);
 
   if (!result) {
-    throw new ApiError(404, 'Academic semester not found');
+    throw new ApiError(404, 'Student  not found');
   }
 
   sendControllerResponse(res, 'Single Student retrieved successfully!', result);

@@ -92,7 +92,7 @@ This repository contains the core services for Delight University. It includes t
 ## Technologies Used
 
   - Backend: Node.js, Express.js, TypeScript
-  - Database: PostgreSQL
+  - Database: PostgreSQL,Prisma ORM
   - Deployment: Vercel
   - Authentication: JWT
   - Packages Used: bcrypt, http-errors, http-status-codes, zod

@@ -14,10 +14,8 @@ export const facultyFilterableFields: string[] = [
 export const facultySearchableFields: string[] = [
     'firstName',
     'lastName',
-    'middleName',
+    'middlename',
     'email',
-    'contactNo',
-    'facultyId',
     'designation'
 ];
 

@@ -2,20 +2,14 @@ import { z } from 'zod';
 
 const createValidation = z.object({
     body: z.object({
-        facultyId: z.string({
-            required_error: 'Faculty id is required'
-        }),
         firstName: z.string({
             required_error: 'First name is required'
         }),
         lastName: z.string({
             required_error: 'Last name is required'
         }),
-        middleName: z.string({
+        middlename: z.string({
             required_error: 'Middle name is required'
-        }),
-        profileImage: z.string({
-            required_error: 'Profile image is required'
         }),
         email: z.string({
             required_error: 'Email is required'
@@ -43,7 +37,6 @@ const createValidation = z.object({
 
 const updateValidation = z.object({
     body: z.object({
-        facultyId: z.string().optional(),
         firstName: z.string().optional(),
         lastName: z.string().optional(),
         middleName: z.string().optional(),

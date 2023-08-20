@@ -1,87 +1,52 @@
-import { Faculty, Prisma, PrismaClient } from '@prisma/client';
+import { Faculty, PrismaClient } from '@prisma/client';
+import { ApiError } from '../../../handlingError/ApiError';
+import { buildWhereConditions } from '../../../helpers/buildWhereCondition';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
-import {
-  facultyRelationalFields,
-  facultyRelationalFieldsMapper,
-  facultySearchableFields,
-} from './faculty.constants';
+import { facultySearchableFields } from './faculty.constants';
 import { IFacultyFilterRequest } from './faculty.interface';
 const prisma = new PrismaClient();
 const createFaculty = async (data: Faculty): Promise<Faculty> => {
-  const result = await prisma.faculty.create({
-    data,
-    include: {
-      academicFaculty: true,
-      academicDepartment: true,
-    },
-  });
-  return result;
+  try {
+    return await prisma.faculty.create({
+      data,
+      include: {
+        academicFaculty: true,
+        academicDepartment: true,
+      },
+    });
+  } catch (error) {
+    const err = error as any;
+    if (err.code === 'P2002') {
+      throw new ApiError(409, 'This Faculty Member already exists');
+    }
+    throw error;
+  }
 };
 
 const getAllFaculties = async (
   filters: IFacultyFilterRequest,
   options: IPaginationOptions
 ): Promise<IGenericResponse<Faculty[]>> => {
-  const { limit, page, skip } = paginationHelpers.calculatePagination(options);
-  const { searchTerm, ...filterData } = filters;
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(options);
 
-  const andConditions = [];
-
-  if (searchTerm) {
-    andConditions.push({
-      OR: facultySearchableFields.map(field => ({
-        [field]: {
-          contains: searchTerm,
-          mode: 'insensitive',
-        },
-      })),
-    });
-  }
-
-  if (Object.keys(filterData).length > 0) {
-    andConditions.push({
-      AND: Object.keys(filterData).map(key => {
-        if (facultyRelationalFields.includes(key)) {
-          return {
-            [facultyRelationalFieldsMapper[key]]: {
-              id: (filterData as any)[key],
-            },
-          };
-        } else {
-          return {
-            [key]: {
-              equals: (filterData as any)[key],
-            },
-          };
-        }
-      }),
-    });
-  }
-
-  const whereConditions: Prisma.FacultyWhereInput =
-    andConditions.length > 0 ? { AND: andConditions } : {};
-
+  const { searchTerm, ...filtersData } = filters;
+  const { whereConditions, sortConditions } = buildWhereConditions(
+    searchTerm,
+    filtersData,
+    facultySearchableFields,
+    sortBy,
+    sortOrder
+  );
   const result = await prisma.faculty.findMany({
-    include: {
-      academicFaculty: true,
-      academicDepartment: true,
-    },
     where: whereConditions,
     skip,
     take: limit,
-    orderBy:
-      options.sortBy && options.sortOrder
-        ? { [options.sortBy]: options.sortOrder }
-        : {
-            createdAt: 'desc',
-          },
+    orderBy: sortConditions,
   });
-  const total = await prisma.faculty.count({
-    where: whereConditions,
-  });
-
+  const total = await prisma.faculty.count();
   return {
     meta: {
       total,

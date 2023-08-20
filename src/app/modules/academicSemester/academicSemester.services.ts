@@ -19,7 +19,7 @@ const createAcademicSemester = async (payload: AcademicSemester) => {
   } catch (error) {
     const err = error as any;
     if (err.code === 'P2002') {
-      throw new ApiError(409, 'Duplicate entry for academic semester');
+      throw new ApiError(409, 'This academic semester already exists');
     }
     throw error;
   }

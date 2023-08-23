@@ -99,3 +99,27 @@ model Faculty {
   @@unique([email], name: "unique_faculties")
   @@map("faculties")
 }
+
+model Room {
+  id         String   @id @default(uuid())
+  roomNumber String
+  floor      String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  buildingId String
+  building   Building @relation(fields: [buildingId], references: [id])
+
+  @@unique([roomNumber], name: "unique_room")
+  @@map("room")
+}
+
+model Building {
+  id        String   @id @default(uuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  rooms     Room[]
+
+  @@unique([title], name: "unique_building")
+  @@map("building")
+}

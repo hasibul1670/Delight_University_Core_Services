@@ -10,7 +10,7 @@ router.post(
   BuildingControllers.createBuilding
 );
 
-router.get('/', BuildingControllers.getAllAcademicFaculties);
+router.get('/', BuildingControllers.getAllBuildings);
 router.get('/:id', BuildingControllers.getSingleBuilding);
 router.delete('/:id', BuildingControllers.deleteBuilding);
 

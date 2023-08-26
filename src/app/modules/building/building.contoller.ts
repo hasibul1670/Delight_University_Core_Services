@@ -18,11 +18,11 @@ const createBuilding = catchAsync(
   }
 );
 
-const getAllAcademicFaculties = catchAsync(
+const getAllBuildings = catchAsync(
   async (req: Request, res: Response) => {
     const filters = pick(req.query, buildingFilterableFields);
     const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
-    const result = await BuildingServices.getAllAcademicFaculties(
+    const result = await BuildingServices.getAllBuildings(
       filters,
       options
     );
@@ -74,7 +74,7 @@ const updateBuilding = catchAsync(
 
 export const BuildingControllers = {
   createBuilding,
-  getAllAcademicFaculties,
+  getAllBuildings,
   getSingleBuilding,
   deleteBuilding,
   updateBuilding,

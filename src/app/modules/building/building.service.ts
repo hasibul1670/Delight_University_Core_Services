@@ -19,7 +19,7 @@ const createBuilding = async (payload: Building): Promise<Building> => {
     throw error;
   }
 };
-const getAllAcademicFaculties = async (
+const getAllBuildings = async (
   filters: IBuildingsFilterRequest,
   options: IPaginationOptions
 ): Promise<IGenericResponse<Building[]>> => {
@@ -95,7 +95,7 @@ const updateBuilding = async (
 };
 export const BuildingServices = {
   createBuilding,
-  getAllAcademicFaculties,
+  getAllBuildings,
   getSingleBuilding,
   deleteBuilding,
   updateBuilding,

@@ -123,3 +123,29 @@ model Building {
   @@unique([title], name: "unique_building")
   @@map("building")
 }
+
+model Course {
+  id              String                 @id @default(uuid())
+  title           String
+  code            String
+  credits         Int                    @default(0)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  preRequisite    CourseToPreRequisite[] @relation("courseToPreRequisite")
+  preRequisiteFor CourseToPreRequisite[] @relation("preRequisiteToCourse")
+
+  @@unique([title], name: "unique_course")
+  @@map("courses")
+}
+
+model CourseToPreRequisite {
+  courseId       String
+  preRequisiteId String
+  course         Course   @relation(fields: [courseId], references: [id], name: "courseToPreRequisite")
+  preRequisite   Course   @relation(fields: [preRequisiteId], references: [id], name: "preRequisiteToCourse")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@id([courseId, preRequisiteId])
+  @@map("courseToPreRequisite")
+}

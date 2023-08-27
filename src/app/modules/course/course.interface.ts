@@ -1,12 +1,15 @@
-export type ICoursesFilterRequest = {
-  searchTerm?: string;
-};
+export type ICourseCreateData = {
+  title: string,
+  code: string,
+  credits: number,
+  preRequisiteCourses: IPrerequisiteCourseRequest[]
+}
 
-export type ICoursesCreateData = {
-  title: string;
-  credits: number;
-  code: string;
-  preRequisiteCourses: {
-    courseId: string;
-  }[];
-};
+export type IPrerequisiteCourseRequest = {
+  courseId: string,
+  isDeleted?: null
+}
+
+export type ICourseFilterRequest = {
+  searchTerm?: string | undefined;
+}

@@ -10,14 +10,12 @@ const createcourse = catchAsync(async (req: Request, res: Response) => {
   sendControllerResponse(res, 'course created successfully', result);
 });
 
-const getAllCourses = catchAsync(
-  async (req: Request, res: Response) => {
-    const filters = pick(req.query, courseFilterableFields);
-    const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
-    const result = await CourseServices.getAllCourses(filters, options);
-    sendControllerResponse(res, 'courses fetched successfully', result);
-  }
-);
+const getAllCourses = catchAsync(async (req: Request, res: Response) => {
+  const filters = pick(req.query, courseFilterableFields);
+  const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
+  const result = await CourseServices.getAllCourses(filters, options);
+  sendControllerResponse(res, 'courses fetched successfully', result);
+});
 
 const getSingleCourse = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -36,9 +34,23 @@ const updateCourse = catchAsync(async (req: Request, res: Response) => {
   sendControllerResponse(res, 'course Updated Successfully!', result);
 });
 
+const assignFaculies = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await CourseServices.assignFaculies(id, req.body.faculties);
+  sendControllerResponse(res, 'Course faculty assigned successfully', result);
+});
+
+const removeFaculties = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await CourseServices.removeFaculties(id, req.body.faculties);
+  sendControllerResponse(res, 'Course faculty deleted successfully', result);
+});
+
 export const CourseControllers = {
   createcourse,
   getAllCourses,
+  assignFaculies,
+  removeFaculties,
   getSingleCourse,
   deleteCourse,
   updateCourse,
